@@ -10,7 +10,7 @@ Team 6 - CS478 Software Development, USI, Fall 2026
 
 ## Planned stack
 
-C# with ASP.NET Core and Blazor, SQL Server for data through EF Core, built in Visual Studio.
+React with TypeScript and Bootstrap on the front end, Node.js with Express on the back end, PostgreSQL for data, Jest for tests, Socket.IO for live updates.
 
 ## Docs
 
