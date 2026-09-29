@@ -4,3 +4,6 @@ obj/
 *.user
 appsettings.*.local.json
 *.log
+node_modules/
+.env
+coverage/
