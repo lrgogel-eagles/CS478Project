@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "start": "node src/index.js",
-    "test": "jest"
+    "test": "jest --runInBand",
+    "db:migrate": "node src/db/migrate.js",
+    "db:seed": "node src/db/seed.js"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.23.1"
   },
   "devDependencies": {
     "jest": "^30.5.2",
