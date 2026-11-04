@@ -4,7 +4,9 @@ const { withNewInviteCode } = require('../invite-codes');
 const { HttpError } = require('../http/errors');
 const { readText, readOptionalText } = require('../http/input');
 const { requireMember } = require('./membership');
+const characters = require('./characters');
 const rolls = require('./rolls');
+const sessionNotes = require('./session-notes');
 
 const NAME_MAX_LENGTH = 80;
 const DESCRIPTION_MAX_LENGTH = 2000;
@@ -48,6 +50,8 @@ router.post('/:id/invite-code', requireMember, async (req, res) => {
   res.json({ campaign });
 });
 
+router.use('/:id/characters', characters);
+router.use('/:id/notes', sessionNotes);
 router.use('/:id/rolls', rolls);
 
 module.exports = router;
