@@ -1,0 +1,172 @@
+@import url('./ticket.css');
+
+.campaign-pins {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 30px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.campaign-pin {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-top: 16px;
+  background-color: var(--card);
+  background-image: var(--tex-grain);
+  box-shadow: var(--shadow-paper);
+}
+
+.campaign-pin:nth-child(3n + 1) {
+  transform: rotate(-1.2deg);
+}
+
+.campaign-pin:nth-child(3n + 2) {
+  transform: rotate(0.9deg) translateY(6px);
+}
+
+.campaign-pin:nth-child(3n) {
+  transform: rotate(-0.4deg);
+}
+
+.campaign-pins .campaign-pin:has(.clamped-text[data-expanded]) {
+  transform: none;
+}
+
+.campaign-pin::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--rule-red), var(--red-marker) 60%, var(--chip-rim));
+  box-shadow: 0 3px 3px var(--die-shadow);
+  transform: translateX(-50%);
+}
+
+.campaign-pin-name {
+  margin: 0;
+  padding: 0 18px 2px;
+  border-bottom: 2px solid var(--rule-red);
+  font-size: 1.75rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.campaign-pin-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 18px 16px;
+}
+
+.campaign-pin-body > .role-stamp {
+  top: 0;
+  margin: 0;
+  line-height: 22px;
+}
+
+.campaign-pin-name a {
+  text-decoration: none;
+}
+
+.campaign-pin-name a:hover {
+  text-decoration: underline;
+}
+
+.role-stamp {
+  margin: 10px 0 6px;
+  padding: 0 8px;
+  border: 2px solid currentcolor;
+  border-radius: 4px;
+  font-family: var(--form);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--form-ink);
+  transform: rotate(-3deg);
+}
+
+.role-stamp[data-role='GM'] {
+  color: var(--red-ink);
+}
+
+.campaign-pin-text {
+  max-width: 100%;
+  font-size: 1.1875rem;
+}
+
+.campaign-pin-body > .campaign-pin-open {
+  margin-top: var(--line);
+}
+
+.campaign-forms {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+  margin-top: 56px;
+}
+
+.start-card {
+  display: grid;
+  gap: 6px;
+  transform: rotate(-0.6deg);
+}
+
+.start-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.75rem;
+  line-height: 1.3;
+}
+
+.start-card .pencil-input {
+  margin-bottom: 12px;
+}
+
+.start-card .ink-btn {
+  justify-self: start;
+  margin-top: 6px;
+}
+
+.join-ticket {
+  gap: 10px;
+  max-width: 340px;
+  padding: 18px 26px 20px 40px;
+  filter: var(--shadow-ticket);
+  transform: rotate(2deg);
+}
+
+.ticket-input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 6px;
+  border: 0;
+  border-bottom: 2px solid var(--ticket-ink);
+  background: transparent;
+  font-family: var(--form);
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--ticket-ink);
+}
+
+.ticket-input::placeholder {
+  color: var(--ticket-hint);
+}
+
+@media (width <= 899.98px) {
+  .campaign-forms {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

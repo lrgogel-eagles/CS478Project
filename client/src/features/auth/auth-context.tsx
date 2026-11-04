@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import { getToken, isUser, setToken, type User } from './api/client';
+import { getToken, setToken } from '../../api/http';
+import { isUser, type User } from './auth-api';
 
-const USER_KEY = 'ck_user';
+export const USER_KEY = 'ck_user';
 
 type AuthState = {
   user: User | null;

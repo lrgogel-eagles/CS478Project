@@ -1,0 +1,341 @@
+.tray {
+  padding: 16px;
+  border-radius: 18px;
+  background-color: var(--wood-deep);
+  background-image: var(--tex-wood), var(--tex-grain);
+  box-shadow:
+    var(--shadow-tray),
+    inset 0 1px 0 var(--tray-glint),
+    inset 0 -2px 0 var(--tray-shade);
+}
+
+.felt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 24px;
+  min-height: 196px;
+  padding: 18px;
+  border-radius: 10px;
+  background-color: var(--felt);
+  background-image: var(--tex-fibre), var(--tex-grain);
+  box-shadow: inset 0 3px 12px var(--felt-shade);
+}
+
+.result-dice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-width: 100%;
+  animation: tumble 420ms cubic-bezier(0.2, 0.8, 0.3, 1.2);
+}
+
+.result-dice[data-count='1'] .die {
+  width: 112px;
+  height: 116px;
+  transform: rotate(9deg);
+}
+
+.result-dice[data-count='2'] {
+  max-width: 200px;
+}
+
+.result-dice[data-count='2'] .die {
+  width: 56px;
+  height: 58px;
+}
+
+.result-more,
+.result-empty,
+.result-line,
+.result-crit {
+  margin: 0;
+  font-size: 1.375rem;
+  line-height: 1.3;
+  color: var(--on-wood);
+  overflow-wrap: anywhere;
+}
+
+.result-empty {
+  max-width: 12em;
+}
+
+.result-math {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.chalk {
+  font-family: var(--marker-font);
+  font-weight: 400;
+  font-size: 4.125rem;
+  line-height: 1;
+  color: var(--chalk);
+}
+
+.result-crit {
+  font-family: var(--marker-font);
+  font-size: 1.25rem;
+  color: var(--ticket);
+}
+
+@keyframes tumble {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) rotate(-40deg) scale(0.85);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.dice-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  margin: 20px 0 10px;
+}
+
+.die-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-height: 44px;
+  padding: 6px 0 4px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font-family: var(--form);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  color: var(--on-wood);
+  cursor: pointer;
+}
+
+.die-btn:hover .die {
+  transform: translateY(-2px);
+}
+
+.die-btn[data-picked] .die {
+  transform: translateY(-5px) rotate(-10deg);
+  filter: drop-shadow(0 8px 4px var(--die-shadow));
+}
+
+.die-btn[data-picked] span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+}
+
+.die-btn:disabled {
+  cursor: progress;
+}
+
+.roll-pad {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+  align-items: end;
+  padding: 26px 18px 16px;
+  background-color: var(--card);
+  background-image: radial-gradient(circle at 11px 11px, var(--pad-hole) 4px, transparent 4.6px), var(--tex-grain);
+  background-size:
+    24px 22px,
+    auto;
+  background-repeat: repeat-x, repeat;
+  box-shadow: var(--shadow-card);
+  transform: rotate(-1deg);
+}
+
+.roll-pad .field-label {
+  grid-column: 1 / -1;
+  margin-bottom: 2px;
+}
+
+.roll-pad .pencil-input {
+  height: 46px;
+  font-size: 1.6875rem;
+}
+
+.roll-error {
+  grid-column: 1 / -1;
+}
+
+.chip {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(var(--chip-red) 0 22.5deg, var(--chip-stripe) 22.5deg 30deg);
+  box-shadow: var(--shadow-chip);
+  cursor: pointer;
+}
+
+.chip::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 2px dashed var(--chip-dash);
+  border-radius: 50%;
+  background: var(--chip-red);
+}
+
+.chip span {
+  position: relative;
+  font-family: var(--form);
+  font-weight: 600;
+  font-size: 1.1875rem;
+  text-transform: uppercase;
+  color: var(--tag-white);
+}
+
+.chip:active {
+  box-shadow: var(--shadow-chip-down);
+  transform: translateY(2px);
+}
+
+.chip:disabled {
+  cursor: progress;
+}
+
+.legal-pad {
+  --line: 30px;
+  --rule-shift: 0px;
+
+  margin-top: 28px;
+  padding-bottom: 20px;
+  background-color: var(--legal);
+  background-image: var(--tex-grain);
+  box-shadow: var(--shadow-paper);
+  transform: rotate(0.8deg);
+}
+
+.legal-pad[data-expanded] {
+  transform: none;
+}
+
+.legal-pad::before {
+  content: '';
+  display: block;
+  height: 22px;
+  background-color: var(--legal-binding);
+  background-image: var(--tex-grain);
+}
+
+.legal-pad h2 {
+  margin: 0;
+  padding: 10px 16px 0 50px;
+  font-size: 1.5rem;
+  line-height: 30px;
+}
+
+.legal-lines,
+.legal-line {
+  margin: 0;
+  padding: 0 16px 0 50px;
+  background-image:
+    linear-gradient(
+      to right,
+      transparent 38px,
+      var(--margin-red) 38px 39px,
+      transparent 39px 42px,
+      var(--margin-red) 42px 43px,
+      transparent 43px
+    ),
+    repeating-linear-gradient(to bottom, transparent 0 calc(var(--line) - 1px), var(--rule-legal) calc(var(--line) - 1px) var(--line));
+  background-position:
+    0 0,
+    0 var(--rule-shift);
+  list-style: none;
+}
+
+.legal-line {
+  font-size: 1.3125rem;
+  line-height: var(--line);
+}
+
+.legal-line > *,
+.legal-lines li > * {
+  position: relative;
+  top: 5.5px;
+}
+
+.legal-pad .paper-alert {
+  position: relative;
+  top: 5.5px;
+}
+
+.legal-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 1.3125rem;
+  line-height: var(--line);
+}
+
+.roll-who {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.roll-total {
+  flex: none;
+  font-size: 1.375rem;
+}
+
+.legal-lines li > .roll-total {
+  top: 4.5px;
+}
+
+.roll-crit {
+  font-size: 1.0625rem;
+  color: var(--red-ink);
+}
+
+.roll-total .roll-crit,
+.roll-total .ringed {
+  line-height: 1;
+}
+
+@media (width <= 1099.98px) {
+  .dice-side {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0 28px;
+    align-items: start;
+  }
+
+  .dice-side .tray,
+  .dice-side .dice-row {
+    grid-column: 1 / -1;
+  }
+
+  .dice-side .legal-pad {
+    margin-top: 0;
+  }
+}
+
+@media (width <= 599.98px) {
+  .dice-side {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dice-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    row-gap: 8px;
+  }
+
+  .dice-side .legal-pad {
+    margin-top: 24px;
+  }
+}

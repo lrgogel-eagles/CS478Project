@@ -1,0 +1,24 @@
+.die {
+  width: 42px;
+  height: 44px;
+  overflow: visible;
+  filter: drop-shadow(0 3px 2px var(--die-shadow));
+  transition: transform 160ms ease;
+}
+
+.die-body polygon {
+  stroke: var(--die-edge);
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+}
+
+.die-number {
+  font-family: var(--form);
+  font-weight: 600;
+  font-size: 11px;
+  fill: var(--die-ink);
+}
+
+.die-number[data-digits='3'] {
+  font-size: 9px;
+}

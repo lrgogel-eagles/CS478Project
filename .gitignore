@@ -7,3 +7,5 @@ appsettings.*.local.json
 node_modules/
 .env
 coverage/
+test-results/
+playwright-report/

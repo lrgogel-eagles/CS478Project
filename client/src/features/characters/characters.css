@@ -1,0 +1,252 @@
+.sheets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  align-items: start;
+}
+
+.sheet {
+  position: relative;
+  min-width: 0;
+  padding: 22px 20px 20px;
+  background-color: var(--paper);
+  background-image: var(--tex-grain);
+  box-shadow: var(--shadow-sheet);
+}
+
+.sheets .sheet:nth-child(odd) {
+  transform: rotate(-1deg);
+}
+
+.sheets .sheet:nth-child(even) {
+  transform: rotate(0.9deg) translateY(10px);
+}
+
+.sheet-fastener {
+  position: absolute;
+  top: -18px;
+  right: 34px;
+  width: 15px;
+  height: 42px;
+  border: 2.2px solid var(--clip-wire);
+  border-radius: 8px;
+}
+
+.sheets .sheet:nth-child(even) .sheet-fastener {
+  top: -8px;
+  left: -16px;
+  right: auto;
+  width: 74px;
+  height: 24px;
+  border: 0;
+  border-radius: 0;
+  background: var(--tape);
+  transform: rotate(-38deg);
+}
+
+.sheet-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 10px 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.field > .pencil {
+  margin: 0;
+  border-bottom: 1.5px solid var(--form-line);
+  font-size: 1.3125rem;
+  font-weight: 400;
+  line-height: 30px;
+  overflow-wrap: anywhere;
+}
+
+.field > .field-label {
+  margin-top: 3px;
+  font-size: 0.8125rem;
+}
+
+.field-name {
+  grid-column: 1 / -1;
+}
+
+.field > .big {
+  font-size: 2rem;
+  line-height: 40px;
+}
+
+.abilities {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 7px;
+  margin: 18px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.ability {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding-top: 5px;
+  border: 1.5px solid var(--form-line);
+  border-radius: 7px;
+}
+
+.ability dd,
+.box-stat dd {
+  margin: 0;
+}
+
+.score {
+  font-size: 1.875rem;
+  line-height: 1.15;
+}
+
+.mod {
+  min-width: 36px;
+  margin-bottom: -11px;
+  padding: 0 4px;
+  border: 1.5px solid var(--form-line);
+  border-radius: 50%;
+  background: var(--paper);
+  font-family: var(--form);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 20px;
+  text-align: center;
+  color: var(--form-ink);
+}
+
+.sheet-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  margin: 26px 0 0;
+}
+
+.box-stat {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0 8px;
+  min-width: 0;
+  padding: 2px 12px;
+  border: 1.5px solid var(--form-line);
+  border-radius: 7px;
+}
+
+.box-stat .score {
+  min-width: 0;
+  font-size: 1.75rem;
+  overflow-wrap: anywhere;
+}
+
+.sheet-edit {
+  position: absolute;
+  right: 16px;
+  bottom: -34px;
+  color: var(--on-wood);
+  font-size: 1.1875rem;
+}
+
+.sheets .sheet:has(.sheet-edit) {
+  margin-bottom: 30px;
+}
+
+.sheet-form {
+  transform: rotate(-0.4deg);
+}
+
+.sheet-form .field > .pencil-input {
+  min-height: var(--min-target);
+  font-size: 1.3125rem;
+  line-height: 1.4;
+}
+
+.sheet-form .field > .big {
+  min-height: 48px;
+  font-size: 2rem;
+  line-height: 1.4;
+}
+
+.sheet-form .field:nth-child(4) {
+  grid-column: 2;
+}
+
+.sheet-form .sheet-top {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.score-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 1.75rem;
+  line-height: 1.3;
+  text-align: center;
+  appearance: textfield;
+}
+
+.score-input::-webkit-inner-spin-button,
+.score-input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.score-input:focus-visible {
+  box-shadow: inset 0 -2px 0 var(--red-marker);
+}
+
+.box-stat .score-input {
+  flex: 1 1 6ch;
+  text-align: right;
+}
+
+@media (width <= 599.98px) {
+  .sheets {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sheet {
+    padding: 20px 14px;
+  }
+
+  .sheets .sheet:nth-child(odd) {
+    transform: rotate(-0.5deg);
+  }
+
+  .sheets .sheet:nth-child(even) {
+    transform: rotate(0.5deg);
+  }
+
+  .abilities {
+    gap: 5px;
+  }
+
+  .score {
+    font-size: 1.625rem;
+  }
+
+  .mod {
+    min-width: 32px;
+    font-size: 0.875rem;
+  }
+
+  .sheet-form .sheet-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sheet-form .field:nth-child(4) {
+    grid-column: auto;
+  }
+}
