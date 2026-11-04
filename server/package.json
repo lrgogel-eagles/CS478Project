@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node --env-file-if-exists=.env src/index.js",
     "test": "jest --runInBand",
-    "db:migrate": "node src/db/migrate.js",
-    "db:seed": "node src/db/seed.js"
+    "db:migrate": "node --env-file-if-exists=.env src/db/migrate.js",
+    "db:seed": "node --env-file-if-exists=.env src/db/seed.js"
   },
   "dependencies": {
     "express": "^5.2.1",
