@@ -1,14 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
-import { api, errorText, LIMITS, type Membership, type Role } from '../api/client';
-
-export const ROLE_LABELS = { GM: 'Game Master', PLAYER: 'Player' } as const satisfies Record<Role, string>;
+import { api, errorText, LIMITS, type Campaign, type Membership } from '../api/client';
+import { CampaignCard } from '../components/CampaignCard';
 
 export function Campaigns() {
   const [memberships, setMemberships] = useState<Membership[]>([]);
   const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [code, setCode] = useState('');
-  const [invite, setInvite] = useState('');
   const [error, setError] = useState('');
   const [joinError, setJoinError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -35,14 +33,17 @@ export function Campaigns() {
     setMemberships((old) => (old.some((m) => m.campaign.id === membership.campaign.id) ? old : [...old, membership]));
   }
 
+  function replace(campaign: Campaign) {
+    setMemberships((old) => old.map((m) => (m.campaign.id === campaign.id ? { ...m, campaign } : m)));
+  }
+
   async function create(event: FormEvent) {
     event.preventDefault();
     setError('');
     try {
-      const created = await api.createCampaign(name.trim());
-      add(created);
-      setInvite(created.campaign.inviteCode);
+      add(await api.createCampaign(name.trim(), description.trim()));
       setName('');
+      setDescription('');
     } catch (caught) {
       setError(errorText(caught));
     }
@@ -69,19 +70,9 @@ export function Campaigns() {
           {memberships.length === 0 ? (
             <p>No campaigns yet. Create or join one below.</p>
           ) : (
-            memberships.map(({ campaign, role }) => (
-              <div className="col-md-4" key={campaign.id}>
-                <div className="card h-100">
-                  <div className="card-body">
-                    <h2 className="h5 text-break">{campaign.name}</h2>
-                    <span className="badge bg-secondary">{ROLE_LABELS[role]}</span>
-                    <div className="mt-3">
-                      <Link className="btn btn-sm btn-outline-primary" to={`/campaigns/${campaign.id}/dice`}>
-                        Dice roller
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+            memberships.map((membership) => (
+              <div className="col-md-4" key={membership.campaign.id}>
+                <CampaignCard membership={membership} onCampaignChange={replace} />
               </div>
             ))
           )}
@@ -104,16 +95,22 @@ export function Campaigns() {
                   onChange={(event) => setName(event.target.value)}
                   required
                 />
+                <label htmlFor="campaignDescription" className="form-label">
+                  Description (optional)
+                </label>
+                <textarea
+                  id="campaignDescription"
+                  className="form-control mb-3"
+                  rows={3}
+                  value={description}
+                  maxLength={LIMITS.campaignDescription}
+                  onChange={(event) => setDescription(event.target.value)}
+                />
                 <button className="btn btn-primary">Create campaign</button>
               </form>
               {error && (
                 <div role="alert" className="alert alert-danger mt-3 text-break">
                   {error}
-                </div>
-              )}
-              {invite && (
-                <div className="alert alert-success mt-3 text-break">
-                  Invite code: <strong>{invite}</strong>
                 </div>
               )}
             </div>

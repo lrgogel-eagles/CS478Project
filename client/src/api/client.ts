@@ -43,6 +43,7 @@ export const LIMITS = {
   passwordMin: 6,
   passwordMax: 72,
   campaignName: 80,
+  campaignDescription: 2000,
   inviteCode: 20,
   expression: 40,
   recentRolls: 20,
@@ -54,6 +55,7 @@ export const ROUTES = {
   campaigns: '/api/campaigns',
   join: '/api/campaigns/join',
   campaign: (id: number) => `/api/campaigns/${id}`,
+  inviteCode: (id: number) => `/api/campaigns/${id}/invite-code`,
   rolls: (id: number) => `/api/campaigns/${id}/rolls`,
 } as const;
 
@@ -137,6 +139,11 @@ function readMembership(data: unknown): Membership {
   return { campaign: data.campaign, role: data.role };
 }
 
+function readCampaign(data: unknown): Campaign {
+  if (!isObject(data) || !isCampaign(data.campaign)) return unexpected('campaign');
+  return data.campaign;
+}
+
 function readCampaignList(data: unknown): Membership[] {
   if (!Array.isArray(data)) return unexpected('campaign list');
   return data.map((item: unknown) => {
@@ -190,8 +197,9 @@ export const api = {
   login: (email: string, password: string) => send('POST', ROUTES.login, { email, password }).then(readSession),
   campaigns: () => send('GET', ROUTES.campaigns).then(readCampaignList),
   campaign: (id: number) => send('GET', ROUTES.campaign(id)).then(readMembership),
-  createCampaign: (name: string) => send('POST', ROUTES.campaigns, { name }).then(readMembership),
+  createCampaign: (name: string, description: string) => send('POST', ROUTES.campaigns, { name, description }).then(readMembership),
   joinCampaign: (inviteCode: string) => send('POST', ROUTES.join, { inviteCode }).then(readMembership),
+  newInviteCode: (campaignId: number) => send('POST', ROUTES.inviteCode(campaignId)).then(readCampaign),
   rolls: (campaignId: number) => send('GET', `${ROUTES.rolls(campaignId)}?limit=${LIMITS.recentRolls}`).then(readRollList),
   roll: (campaignId: number, expression: string) => send('POST', ROUTES.rolls(campaignId), { expression }).then(readRoll),
 };
