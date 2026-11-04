@@ -19,10 +19,8 @@ npm test
 npm run build
 ```
 
-## Integration checklist
+## API
 
-**IMPORTANT:** `src/api/client.ts` has provisional API routes because the wiki's API Routes page was not accessible. Match `ROUTES`, JSON request bodies, response types, and token/session handling to the actual backend before demo. The frontend expects login/signup to return `{token,user}`, campaign list to return an array or `{campaigns:[...]}`, creation/join to return a campaign object, and dice roll to return `{dice:[...],total,modifier?}`. Backend must enforce authentication and authorize campaign access; client redirects are not a security boundary.
+`src/api/client.ts` calls the routes listed on the wiki's API Routes page. `LIMITS` in the same file holds the database's length limits, and the inputs use them.
 
-Frontend pages: `/login`, `/campaigns`, `/dice`. Unauthenticated visitors are redirected to `/login`.
-
-No backend or GitHub repository files were changed by this generated package.
+Pages are `/login`, `/campaigns` and `/campaigns/:id/dice`. If you aren't logged in you get sent to `/login`.

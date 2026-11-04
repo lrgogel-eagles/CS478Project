@@ -1,1 +1,13 @@
-import React from 'react';import{createRoot}from'react-dom/client';import 'bootstrap/dist/css/bootstrap.min.css';import App from './App';createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { App } from './App';
+
+const root = document.getElementById('root');
+if (!root) throw new Error('index.html has no #root element');
+
+createRoot(root).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
