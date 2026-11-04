@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { api, LIMITS, type Campaign, type Membership, type Roll } from '../api/client';
 import { AuthProvider } from '../auth';
 import { Campaigns } from '../pages/Campaigns';
@@ -20,6 +20,7 @@ vi.mock('../api/client', async (importOriginal) => {
       campaign: vi.fn(),
       createCampaign: vi.fn(),
       joinCampaign: vi.fn(),
+      newInviteCode: vi.fn(),
       rolls: vi.fn(),
       roll: vi.fn(),
     },
@@ -28,8 +29,8 @@ vi.mock('../api/client', async (importOriginal) => {
 
 const user = userEvent.setup({ delay: null });
 
-function makeCampaign(id: number, name: string, inviteCode = `CODE${id}`): Campaign {
-  return { id, name, description: '', inviteCode, createdAt: '2026-11-01T18:00:00.000Z' };
+function makeCampaign(id: number, name: string, inviteCode = `CODE${id}`, description = ''): Campaign {
+  return { id, name, description, inviteCode, createdAt: '2026-11-01T18:00:00.000Z' };
 }
 
 function makeRoll(id: number, expression: string, results: number[], modifier: number, displayName = 'Ann'): Roll {
@@ -49,6 +50,13 @@ function renderPage(page: ReactNode, path = '/', pattern = '*') {
       </MemoryRouter>
     </AuthProvider>
   );
+}
+
+async function findCard(name: string) {
+  const heading = await screen.findByRole('heading', { name });
+  const card = heading.closest('.card');
+  if (!(card instanceof HTMLElement)) throw new Error(`No card around the ${name} heading`);
+  return card;
 }
 
 function renderDice() {
@@ -103,6 +111,10 @@ describe('Campaigns', () => {
     vi.mocked(api.campaigns).mockResolvedValue([]);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('lists each campaign with your role', async () => {
     vi.mocked(api.campaigns).mockResolvedValue([{ campaign: makeCampaign(1, 'Dragon Quest'), role: 'GM' }, sunkenKeep]);
     renderPage(<Campaigns />);
@@ -118,15 +130,88 @@ describe('Campaigns', () => {
     expect(await screen.findByRole('link', { name: 'Dice roller' })).toHaveAttribute('href', '/campaigns/7/dice');
   });
 
-  it('creates a campaign and shows its invite code', async () => {
-    vi.mocked(api.createCampaign).mockResolvedValue({ campaign: makeCampaign(2, 'New World', 'ABC123'), role: 'GM' });
+  it('creates a campaign with a description and shows its invite code', async () => {
+    vi.mocked(api.createCampaign).mockResolvedValue({ campaign: makeCampaign(2, 'New World', 'ABC123', 'Pirates and sea monsters.'), role: 'GM' });
+    renderPage(<Campaigns />);
+    await screen.findByText('No campaigns yet. Create or join one below.');
+    await user.type(screen.getByLabelText('Campaign name'), 'New World');
+    await user.type(screen.getByLabelText('Description (optional)'), ' Pirates and sea monsters. ');
+    await user.click(screen.getByRole('button', { name: 'Create campaign' }));
+    const card = await findCard('New World');
+    expect(api.createCampaign).toHaveBeenCalledWith('New World', 'Pirates and sea monsters.');
+    expect(within(card).getByText('ABC123')).toBeInTheDocument();
+    expect(within(card).getByText('Pirates and sea monsters.')).toBeInTheDocument();
+    expect(screen.getByLabelText('Campaign name')).toHaveValue('');
+    expect(screen.getByLabelText('Description (optional)')).toHaveValue('');
+  });
+
+  it('creates a campaign without a description', async () => {
+    vi.mocked(api.createCampaign).mockResolvedValue({ campaign: makeCampaign(2, 'New World'), role: 'GM' });
     renderPage(<Campaigns />);
     await screen.findByText('No campaigns yet. Create or join one below.');
     await user.type(screen.getByLabelText('Campaign name'), 'New World');
     await user.click(screen.getByRole('button', { name: 'Create campaign' }));
-    expect(await screen.findByText('ABC123')).toBeInTheDocument();
-    expect(api.createCampaign).toHaveBeenCalledWith('New World');
-    expect(screen.getByText('New World')).toBeInTheDocument();
+    await findCard('New World');
+    expect(api.createCampaign).toHaveBeenCalledWith('New World', '');
+  });
+
+  it('shows the invite code and New code button to the GM only', async () => {
+    vi.mocked(api.campaigns).mockResolvedValue([{ campaign: makeCampaign(1, 'Dragon Quest', 'DRAGON'), role: 'GM' }, sunkenKeep]);
+    renderPage(<Campaigns />);
+    const gmCard = await findCard('Dragon Quest');
+    const playerCard = await findCard('The Sunken Keep');
+    expect(within(gmCard).getByText('DRAGON')).toBeInTheDocument();
+    expect(within(gmCard).getByRole('button', { name: 'New code' })).toBeInTheDocument();
+    expect(within(playerCard).queryByText(/Invite code/)).not.toBeInTheDocument();
+    expect(within(playerCard).queryByText('KEEP42')).not.toBeInTheDocument();
+    expect(within(playerCard).queryByRole('button', { name: 'New code' })).not.toBeInTheDocument();
+  });
+
+  it('swaps in the new invite code when the GM asks for one', async () => {
+    vi.mocked(api.campaigns).mockResolvedValue([{ campaign: makeCampaign(1, 'Dragon Quest', 'DRAGON'), role: 'GM' }]);
+    vi.mocked(api.newInviteCode).mockResolvedValue(makeCampaign(1, 'Dragon Quest', 'WYVERN'));
+    renderPage(<Campaigns />);
+    const card = await findCard('Dragon Quest');
+    await user.click(within(card).getByRole('button', { name: 'New code' }));
+    expect(await within(card).findByText('WYVERN')).toBeInTheDocument();
+    expect(within(card).queryByText('DRAGON')).not.toBeInTheDocument();
+    expect(api.newInviteCode).toHaveBeenCalledWith(1);
+  });
+
+  it('keeps the old invite code and shows the error when a new one fails', async () => {
+    vi.mocked(api.campaigns).mockResolvedValue([{ campaign: makeCampaign(1, 'Dragon Quest', 'DRAGON'), role: 'GM' }]);
+    vi.mocked(api.newInviteCode).mockRejectedValue(new Error('Only the GM can change the invite code'));
+    renderPage(<Campaigns />);
+    const card = await findCard('Dragon Quest');
+    await user.click(within(card).getByRole('button', { name: 'New code' }));
+    expect(await within(card).findByRole('alert')).toHaveTextContent('Only the GM can change the invite code');
+    expect(within(card).getByText('DRAGON')).toBeInTheDocument();
+    expect(within(card).getByRole('button', { name: 'New code' })).toBeEnabled();
+  });
+
+  it('shows the description on every member card', async () => {
+    const keep = { ...sunkenKeep, campaign: { ...sunkenKeep.campaign, description: 'A flooded fortress on the coast.' } };
+    vi.mocked(api.campaigns).mockResolvedValue([keep]);
+    renderPage(<Campaigns />);
+    const card = await findCard('The Sunken Keep');
+    expect(within(card).getByText('A flooded fortress on the coast.')).toBeInTheDocument();
+    expect(within(card).queryByRole('button', { name: 'Show more' })).not.toBeInTheDocument();
+  });
+
+  it('cuts off a long description until you ask for the rest', async () => {
+    vi.spyOn(Element.prototype, 'scrollHeight', 'get').mockReturnValue(400);
+    vi.spyOn(Element.prototype, 'clientHeight', 'get').mockReturnValue(72);
+    const long = 'The tide comes in twice a night. '.repeat(60);
+    vi.mocked(api.campaigns).mockResolvedValue([{ campaign: makeCampaign(1, 'Dragon Quest', 'DRAGON', long), role: 'GM' }]);
+    renderPage(<Campaigns />);
+    const card = await findCard('Dragon Quest');
+    const more = within(card).getByRole('button', { name: 'Show more' });
+    expect(more).toHaveAttribute('aria-expanded', 'false');
+    await user.click(more);
+    const less = within(card).getByRole('button', { name: 'Show less' });
+    expect(less).toHaveAttribute('aria-expanded', 'true');
+    await user.click(less);
+    expect(within(card).getByRole('button', { name: 'Show more' })).toBeInTheDocument();
   });
 
   it('joins a campaign with an invite code', async () => {
@@ -147,11 +232,14 @@ describe('Campaigns', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('No campaign has that invite code');
   });
 
-  it('stops the campaign name and invite code at their limits', async () => {
+  it('stops the campaign name, description and invite code at their limits', async () => {
     renderPage(<Campaigns />);
     await user.type(screen.getByLabelText('Campaign name'), 'c'.repeat(LIMITS.campaignName + 20));
+    await user.click(screen.getByLabelText('Description (optional)'));
+    await user.paste('d'.repeat(LIMITS.campaignDescription + 20));
     await user.type(screen.getByLabelText('Invite code'), 'i'.repeat(LIMITS.inviteCode + 20));
     expect(screen.getByLabelText('Campaign name')).toHaveValue('c'.repeat(LIMITS.campaignName));
+    expect(screen.getByLabelText('Description (optional)')).toHaveValue('d'.repeat(LIMITS.campaignDescription));
     expect(screen.getByLabelText('Invite code')).toHaveValue('i'.repeat(LIMITS.inviteCode));
   });
 });

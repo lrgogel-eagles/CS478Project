@@ -1,5 +1,5 @@
 const express = require('express');
-const { createCampaign, findCampaignByInviteCode, listCampaignsForUser, addPlayer, replaceInviteCode } = require('../data/campaigns');
+const { createCampaign, findCampaignByInviteCode, listCampaignsForUser, listMembers, addPlayer, replaceInviteCode } = require('../data/campaigns');
 const { withNewInviteCode } = require('../invite-codes');
 const { HttpError } = require('../http/errors');
 const { readText, readOptionalText } = require('../http/input');
@@ -37,6 +37,10 @@ router.post('/join', async (req, res) => {
 
 router.get('/:id', requireMember, (req, res) => {
   res.json(req.membership);
+});
+
+router.get('/:id/members', requireMember, async (req, res) => {
+  res.json(await listMembers(req.membership.campaign.id));
 });
 
 router.post('/:id/invite-code', requireMember, async (req, res) => {
