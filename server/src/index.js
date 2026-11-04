@@ -1,4 +1,7 @@
 const app = require('./app');
+const { readJwtSecret } = require('./auth/tokens');
+
+readJwtSecret();
 
 const port = process.env.PORT || 3000;
 
