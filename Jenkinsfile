@@ -30,7 +30,9 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 dir('server') {
-                    bat 'npm test -- --runInBand'
+                    withCredentials([string(credentialsId: 'campaign-keeper-test-db', variable: 'DATABASE_URL')]) {
+                        bat 'npm test -- --runInBand'
+                    }
                 }
             }
         }
