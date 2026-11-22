@@ -1,0 +1,153 @@
+{
+  "format": "campaign-keeper-campaign",
+  "version": 1,
+  "exportedAt": "2026-11-04T00:00:00.000Z",
+  "campaign": {
+    "name": "The Shattered Crown",
+    "description": "The Ember Crown has vanished from the royal vault. Strange storms spread across the kingdom, and the party must discover who stole it before the winter solstice.",
+    "system": "Dungeons & Dragons 5e",
+    "sessionNumber": 2,
+    "characters": [
+      {
+        "id": "demo-seraphina",
+        "name": "Seraphina Vale",
+        "portrait": "🧝",
+        "className": "Ranger",
+        "ancestry": "Wood Elf",
+        "level": 5,
+        "maxHp": 44,
+        "currentHp": 37,
+        "tempHp": 6,
+        "armorClass": 16,
+        "speed": 35,
+        "strength": 12,
+        "dexterity": 18,
+        "constitution": 14,
+        "intelligence": 11,
+        "wisdom": 16,
+        "charisma": 10,
+        "inventory": "Longbow, twin daggers, 2 healing potions, ancient compass",
+        "abilities": "Hunter’s Mark, Cure Wounds, Extra Attack",
+        "description": "A royal scout tracking the stolen Ember Crown.",
+        "private": false
+      },
+      {
+        "id": "demo-brom",
+        "name": "Brom Ironvale",
+        "portrait": "🛡️",
+        "className": "Fighter",
+        "ancestry": "Mountain Dwarf",
+        "level": 5,
+        "maxHp": 52,
+        "currentHp": 42,
+        "tempHp": 0,
+        "armorClass": 18,
+        "speed": 25,
+        "strength": 18,
+        "dexterity": 10,
+        "constitution": 16,
+        "intelligence": 9,
+        "wisdom": 12,
+        "charisma": 11,
+        "inventory": "Warhammer, shield, chain mail, smithing kit",
+        "abilities": "Second Wind, Action Surge, Extra Attack",
+        "description": "A former royal guard seeking redemption.",
+        "private": false
+      },
+      {
+        "id": "demo-lyra",
+        "name": "Lyra Ashford",
+        "portrait": "🔮",
+        "className": "Wizard",
+        "ancestry": "Human",
+        "level": 5,
+        "maxHp": 28,
+        "currentHp": 22,
+        "tempHp": 0,
+        "armorClass": 13,
+        "speed": 30,
+        "strength": 8,
+        "dexterity": 14,
+        "constitution": 12,
+        "intelligence": 18,
+        "wisdom": 13,
+        "charisma": 12,
+        "inventory": "Spellbook, arcane focus, scroll of protection",
+        "abilities": "Fireball, Mage Armor, Detect Magic, Misty Step",
+        "description": "A scholar who suspects the crown is part of an ancient seal.",
+        "private": false
+      }
+    ],
+    "quests": [
+      {
+        "id": "q1",
+        "title": "Find the Ember Crown",
+        "status": "Active",
+        "description": "Follow the stolen crown from the royal vault to the ruined observatory.",
+        "private": false
+      },
+      {
+        "id": "q2",
+        "title": "The Missing Archivist",
+        "status": "Active",
+        "description": "Locate Archivist Thorne before the cult reaches him.",
+        "private": false
+      },
+      {
+        "id": "q3",
+        "title": "A Debt in Stonebridge",
+        "status": "Completed",
+        "description": "Earn the trust of the bridge wardens.",
+        "private": false
+      }
+    ],
+    "notes": [
+      {
+        "id": "n1",
+        "title": "Previously on The Shattered Crown",
+        "description": "The party found a silver key beneath Stonebridge and discovered a map marked with three stars.",
+        "private": false
+      },
+      {
+        "id": "n2",
+        "title": "GM Secret: The True Thief",
+        "description": "The royal adviser staged the theft to break the seal beneath the observatory. Reveal this only after the party finds the coded ledger.",
+        "private": true
+      }
+    ],
+    "events": [
+      {
+        "id": "e1",
+        "title": "Session 3: The Ruined Observatory",
+        "date": "2026-11-12",
+        "description": "Explore the observatory and investigate the star map.",
+        "private": false
+      },
+      {
+        "id": "e2",
+        "title": "Winter Solstice",
+        "date": "2026-12-21",
+        "description": "The ancient seal weakens at midnight.",
+        "private": false
+      }
+    ],
+    "activity": [
+      {
+        "id": "a1",
+        "at": "2026-11-01T19:00:00.000Z",
+        "actor": "GM",
+        "kind": "session",
+        "message": "Started session 2",
+        "private": false
+      },
+      {
+        "id": "a2",
+        "at": "2026-11-01T20:00:00.000Z",
+        "actor": "GM",
+        "kind": "story",
+        "message": "The party discovered the silver key under Stonebridge.",
+        "private": false
+      }
+    ]
+  }
+}

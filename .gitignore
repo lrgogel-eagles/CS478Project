@@ -7,3 +7,4 @@ appsettings.*.local.json
 node_modules/
 .env
 coverage/
+server/data/*.json

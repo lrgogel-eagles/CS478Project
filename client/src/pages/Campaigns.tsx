@@ -1,151 +1,55 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { CreateCampaignForm } from './campaigns/CreateCampaignForm';
+import { JoinCampaignForm } from './campaigns/JoinCampaignForm';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { api, errorText, LIMITS, type Membership, type Role } from '../api/client';
-
-export const ROLE_LABELS = { GM: 'Game Master', PLAYER: 'Player' } as const satisfies Record<Role, string>;
-
-export function Campaigns() {
-  const [memberships, setMemberships] = useState<Membership[]>([]);
-  const [name, setName] = useState('');
-  const [code, setCode] = useState('');
-  const [invite, setInvite] = useState('');
-  const [error, setError] = useState('');
-  const [joinError, setJoinError] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isActive = true;
-    api
-      .campaigns()
-      .then((list) => {
-        if (isActive) setMemberships(list);
-      })
-      .catch((caught: unknown) => {
-        if (isActive) setError(errorText(caught));
-      })
-      .finally(() => {
-        if (isActive) setIsLoading(false);
-      });
-    return () => {
-      isActive = false;
-    };
-  }, []);
-
-  function add(membership: Membership) {
-    setMemberships((old) => (old.some((m) => m.campaign.id === membership.campaign.id) ? old : [...old, membership]));
-  }
-
-  async function create(event: FormEvent) {
-    event.preventDefault();
-    setError('');
-    try {
-      const created = await api.createCampaign(name.trim());
-      add(created);
-      setInvite(created.campaign.inviteCode);
-      setName('');
-    } catch (caught) {
-      setError(errorText(caught));
+import { api, Campaign } from '../api/client';
+export default function Campaigns() {
+    const [campaigns, setCampaigns] = useState<Campaign[]>([]), [name, setName] = useState(''), [host, setHost] = useState(''), [system, setSystem] = useState(''), [description, setDescription] = useState(''), [code, setCode] = useState(''), [message, setMessage] = useState('');
+    async function refresh() { try {
+        const data = await api.campaigns();
+        setCampaigns(Array.isArray(data) ? data : data.campaigns);
     }
-  }
-
-  async function join(event: FormEvent) {
-    event.preventDefault();
-    setJoinError('');
-    try {
-      add(await api.joinCampaign(code.trim()));
-      setCode('');
-    } catch (caught) {
-      setJoinError(errorText(caught));
+    catch (e) {
+        setMessage((e as Error).message);
+    } }
+    useEffect(() => { refresh(); }, []);
+    async function create(e: FormEvent) { e.preventDefault(); try {
+        const result = await api.createCampaign({ name, host, system, description });
+        setName('');
+        setHost('');
+        setSystem('');
+        setDescription('');
+        setMessage(`Created ${result.name}. Invite code: ${result.inviteCode}`);
+        await refresh();
     }
-  }
-
-  return (
-    <>
-      <h1 className="mb-4">My Campaigns</h1>
-      {isLoading ? (
-        <p>Loading campaigns...</p>
-      ) : (
-        <div className="row g-3 mb-4">
-          {memberships.length === 0 ? (
-            <p>No campaigns yet. Create or join one below.</p>
-          ) : (
-            memberships.map(({ campaign, role }) => (
-              <div className="col-md-4" key={campaign.id}>
-                <div className="card h-100">
-                  <div className="card-body">
-                    <h2 className="h5 text-break">{campaign.name}</h2>
-                    <span className="badge bg-secondary">{ROLE_LABELS[role]}</span>
-                    <div className="mt-3">
-                      <Link className="btn btn-sm btn-outline-primary" to={`/campaigns/${campaign.id}/dice`}>
-                        Dice roller
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
-      <div className="row g-4">
-        <section className="col-md-6">
-          <div className="card">
-            <div className="card-body">
-              <h2 className="h5">Start a campaign</h2>
-              <form onSubmit={create}>
-                <label htmlFor="campaignName" className="form-label">
-                  Campaign name
-                </label>
-                <input
-                  id="campaignName"
-                  className="form-control mb-3"
-                  value={name}
-                  maxLength={LIMITS.campaignName}
-                  onChange={(event) => setName(event.target.value)}
-                  required
-                />
-                <button className="btn btn-primary">Create campaign</button>
-              </form>
-              {error && (
-                <div role="alert" className="alert alert-danger mt-3 text-break">
-                  {error}
-                </div>
-              )}
-              {invite && (
-                <div className="alert alert-success mt-3 text-break">
-                  Invite code: <strong>{invite}</strong>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-        <section className="col-md-6">
-          <div className="card">
-            <div className="card-body">
-              <h2 className="h5">Join a campaign</h2>
-              <form onSubmit={join}>
-                <label htmlFor="inviteCode" className="form-label">
-                  Invite code
-                </label>
-                <input
-                  id="inviteCode"
-                  className="form-control mb-3"
-                  value={code}
-                  maxLength={LIMITS.inviteCode}
-                  onChange={(event) => setCode(event.target.value)}
-                  required
-                />
-                <button className="btn btn-outline-primary">Join campaign</button>
-              </form>
-              {joinError && (
-                <div role="alert" className="alert alert-danger mt-3 text-break">
-                  {joinError}
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      </div>
-    </>
-  );
+    catch (e) {
+        setMessage((e as Error).message);
+    } }
+    async function join(e: FormEvent) { e.preventDefault(); try {
+        await api.joinCampaign(code);
+        setCode('');
+        setMessage('Joined campaign');
+        await refresh();
+    }
+    catch (e) {
+        setMessage((e as Error).message);
+    } }
+    async function importBackup(e: ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (!file)
+            return;
+        try {
+            if (file.size > 90000)
+                throw Error('Backup is too large');
+            const backup = JSON.parse(await file.text());
+            const result = await api.importCampaign(backup);
+            setMessage(`Imported ${result.name}. Invite code: ${result.inviteCode}`);
+            await refresh();
+        }
+        catch (error) {
+            setMessage((error as Error).message);
+        }
+        e.target.value = '';
+    }
+    return <div className="ck-original-screen"><div className="hero"><div className="eyebrow">WELCOME TO CAMPAIGN KEEPER</div><h2>Every legend begins<br />with a story.</h2><p>Host your own campaign, gather your party, and keep your world organized in one place.</p></div>{message && <div role="status" className="notice">{message}</div>}{campaigns.length > 0 && <section className="panel campaign-list-panel"><h3>Your campaigns</h3><div className="welcome-grid">{campaigns.map(c => <div className="tile" key={c.id}><h3>{c.name}</h3><p>{c.role} · Invite code: <strong>{c.inviteCode}</strong></p><Link className="primary" to={`/campaigns/${c.id}`}>Open campaign →</Link></div>)}</div></section>}<div className="welcome-grid"><CreateCampaignForm create={create} name={name} host={host} system={system} description={description} setName={setName} setHost={setHost} setSystem={setSystem} setDescription={setDescription}/><JoinCampaignForm join={join} code={code} setCode={setCode}/></div><div className="panel backup-panel"><h3>Restore a saved campaign</h3><p>Game Masters can import a campaign JSON backup and create a new lobby.</p><input aria-label="Campaign backup JSON" type="file" accept=".json,application/json" onChange={importBackup}/></div></div>;
 }

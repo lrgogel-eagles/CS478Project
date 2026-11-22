@@ -1,81 +1,12 @@
-import type { ReactNode } from 'react';
-import { BrowserRouter, Link, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Link, Navigate, NavLink, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth';
-import { Campaigns } from './pages/Campaigns';
-import { Dice } from './pages/Dice';
-import { Login } from './pages/Login';
-
-function Protected({ children }: { children: ReactNode }) {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
-}
-
-function Nav() {
-  const { isAuthenticated, logout, user } = useAuth();
-  const navigate = useNavigate();
-  return (
-    <nav className="navbar navbar-dark bg-dark px-4">
-      <Link className="navbar-brand" to="/">
-        Campaign Keeper
-      </Link>
-      {isAuthenticated && (
-        <div className="d-flex gap-3 align-items-center">
-          <Link className="text-white" to="/campaigns">
-            Campaigns
-          </Link>
-          <span className="text-white-50 text-break">{user?.displayName}</span>
-          <button
-            className="btn btn-outline-light btn-sm text-nowrap"
-            onClick={() => {
-              logout();
-              navigate('/login');
-            }}
-          >
-            Log out
-          </button>
-        </div>
-      )}
-    </nav>
-  );
-}
-
-function Pages() {
-  const { isAuthenticated } = useAuth();
-  return (
-    <>
-      <Nav />
-      <main className="container py-4">
-        <Routes>
-          <Route path="/login" element={isAuthenticated ? <Navigate to="/campaigns" replace /> : <Login />} />
-          <Route
-            path="/campaigns"
-            element={
-              <Protected>
-                <Campaigns />
-              </Protected>
-            }
-          />
-          <Route
-            path="/campaigns/:campaignId/dice"
-            element={
-              <Protected>
-                <Dice />
-              </Protected>
-            }
-          />
-          <Route path="*" element={<Navigate to={isAuthenticated ? '/campaigns' : '/login'} replace />} />
-        </Routes>
-      </main>
-    </>
-  );
-}
-
-export function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Pages />
-      </BrowserRouter>
-    </AuthProvider>
-  );
-}
+import Login from './pages/Login';
+import Campaigns from './pages/Campaigns';
+import Dice from './pages/Dice';
+import Workspace from './pages/Workspace';
+import './style.css';
+function Protected({ children }: {
+    children: React.ReactNode;
+}) { return useAuth().authenticated ? <>{children}</> : <Navigate to="/login" replace/>; }
+function Shell() { const { authenticated, logout, user } = useAuth(); const navigate = useNavigate(); const location = useLocation(); const inCampaign = /^\/campaigns\/[^/]+$/.test(location.pathname); return <div className="ck-shell"><aside className="ck-sidebar"><Link className="ck-brand" to="/campaigns"><span className="ck-brand-icon">⚔</span><span>CAMPAIGN<br /><strong>KEEPER</strong></span></Link><div className="ck-sidebar-label">YOUR ADVENTURE</div><nav className="ck-side-nav">{authenticated ? <><NavLink to="/campaigns" end>⌂ <span>My Campaigns</span></NavLink>{inCampaign ? <><a href="#overview" onClick={e => { e.preventDefault(); window.dispatchEvent(new CustomEvent('ck-tab', { detail: 'overview' })); }}>◈ &nbsp; Overview</a><a href="#characters" onClick={e => { e.preventDefault(); window.dispatchEvent(new CustomEvent('ck-tab', { detail: 'characters' })); }}>♙ &nbsp; Characters</a><a href="#session" onClick={e => { e.preventDefault(); window.dispatchEvent(new CustomEvent('ck-tab', { detail: 'overview' })); }}>✧ &nbsp; Live session</a><a href="#quests" onClick={e => { e.preventDefault(); window.dispatchEvent(new CustomEvent('ck-tab', { detail: 'quests' })); }}>⚑ &nbsp; Quests</a><a href="#notes" onClick={e => { e.preventDefault(); window.dispatchEvent(new CustomEvent('ck-tab', { detail: 'notes' })); }}>▤ &nbsp; Notes</a><a href="#events" onClick={e => { e.preventDefault(); window.dispatchEvent(new CustomEvent('ck-tab', { detail: 'events' })); }}>▦ &nbsp; Events</a></> : <NavLink to="/dice">⚄ <span>Dice Roller</span></NavLink>}</> : <Link to="/login">✦ <span>Welcome</span></Link>}</nav><div className="ck-sidebar-bottom">{authenticated ? <><div className="ck-profile-icon">✦</div><strong>{user?.name || 'Adventurer'}</strong><span>Ready for adventure</span><button onClick={() => { logout(); navigate('/login'); }}>Log out</button></> : <><strong>YOUR STORY AWAITS</strong><span>Every adventure begins somewhere.</span></>}</div></aside><div className="ck-content"><header className="ck-topbar"><div><span className="ck-eyebrow">TABLETOP CAMPAIGN MANAGEMENT</span><div className="ck-top-title">Your next adventure awaits.</div></div><span className="ck-connection"><span className="ck-online-dot"/> LOCAL EDITION</span></header><main className="ck-main"><Routes><Route path="/login" element={authenticated ? <Navigate to="/campaigns" replace/> : <Login />}/><Route path="/campaigns" element={<Protected><Campaigns /></Protected>}/><Route path="/campaigns/:id" element={<Protected><Workspace /></Protected>}/><Route path="/dice" element={<Protected><Dice /></Protected>}/><Route path="*" element={<Navigate to={authenticated ? '/campaigns' : '/login'} replace/>}/></Routes></main></div></div>; }
+export default function App() { return <AuthProvider><BrowserRouter><Shell /></BrowserRouter></AuthProvider>; }

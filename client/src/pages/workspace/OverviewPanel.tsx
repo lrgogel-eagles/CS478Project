@@ -1,0 +1,10 @@
+import type { CampaignState } from './types';
+type Props = {
+    campaign: CampaignState;
+    gm: boolean;
+    currentMember?: CampaignState['members'][number];
+    act: (path: string, method?: string, body?: unknown) => Promise<any>;
+};
+export function OverviewPanel({ campaign, gm, currentMember, act }: Props) {
+    return <><div className="stat-grid"><div className="stat"><span>PARTY MEMBERS</span><b>{campaign.members.length}</b></div><div className="stat"><span>CHARACTERS</span><b>{campaign.characters.length}</b></div><div className="stat"><span>QUESTS</span><b>{campaign.quests.length}</b></div><div className="stat"><span>SESSION</span><b>{campaign.sessionNumber}</b></div></div><div className="panel"><div className="section-title"><h3>Party and Session</h3></div><p>{campaign.status === 'active' ? 'Session in progress' : campaign.status === 'ended' ? 'Session ended' : 'Waiting for players'}</p><div className="row g-2">{campaign.members.map(m => <div className="col-md-4" key={m.id}><div className="card p-3"><strong>{m.name}</strong><span>{m.role === 'gm' ? 'Game Master' : campaign.status === 'active' ? 'In Session' : m.ready ? 'Ready' : 'Waiting'}</span>{gm && m.role !== 'gm' && <button className="btn btn-sm btn-outline-danger mt-2" onClick={() => act(`/members/${m.id}`, 'DELETE')}>Remove player</button>}</div></div>)}</div><div className="mt-3 d-flex gap-2">{!gm && campaign.status !== 'active' && <button className="btn btn-primary" onClick={() => act('/ready', 'PATCH', { ready: !currentMember?.ready })}>{currentMember?.ready ? 'Cancel ready' : 'Ready up'}</button>}{gm && campaign.status !== 'active' && <button className="btn btn-primary" onClick={() => act('/status', 'PATCH', { status: 'active' })}>Start session</button>}{gm && campaign.status === 'active' && <button className="btn btn-primary" onClick={() => act('/status', 'PATCH', { status: 'ended' })}>End session</button>}</div><h3 className="h5 mt-4">Recent activity</h3>{campaign.activity.slice(-12).reverse().map(a => <p key={a.id} className="item">{a.message}</p>)}</div></>;
+}

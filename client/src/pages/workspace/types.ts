@@ -1,0 +1,66 @@
+export type Member = {
+    id: string;
+    name: string;
+    role: string;
+    ready: boolean;
+};
+export type Item = {
+    id: string;
+    name?: string;
+    title?: string;
+    description?: string;
+    content?: string;
+    status?: string;
+    className?: string;
+    level?: number;
+    maxHp?: number;
+    currentHp?: number;
+    tempHp?: number;
+    private?: boolean;
+    ownerId?: string;
+    date?: string;
+    portraitImage?: string;
+    ancestry?: string;
+    background?: string;
+    alignment?: string;
+    armorClass?: number;
+    speed?: number;
+    strength?: number;
+    dexterity?: number;
+    constitution?: number;
+    intelligence?: number;
+    wisdom?: number;
+    charisma?: number;
+    inventory?: string;
+    abilities?: string;
+};
+export type Activity = {
+    id: string;
+    message: string;
+    kind: string;
+    actor: string;
+    at: string;
+    rolls?: number[];
+    sides?: number;
+    total?: number;
+};
+export type CampaignState = {
+    id: string;
+    code: string;
+    name: string;
+    status: string;
+    sessionNumber: number;
+    members: Member[];
+    me: {
+        id: string;
+        name: string;
+        role: string;
+    };
+    characters: Item[];
+    quests: Item[];
+    notes: Item[];
+    events: Item[];
+    activity: Activity[];
+};
+export type Section = 'overview' | 'characters' | 'quests' | 'notes' | 'events' | 'dice';
+export const sections: Section[] = ['overview', 'characters', 'quests', 'notes', 'events', 'dice'];

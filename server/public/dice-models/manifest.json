@@ -1,0 +1,9 @@
+{
+  "d4": "/dice-models/PolyhedralDice/D4.gltf",
+  "d6": "/dice-models/PolyhedralDice/D6.gltf",
+  "d8": "/dice-models/PolyhedralDice/D8.gltf",
+  "d10": "/dice-models/PolyhedralDice/D10_Ones.gltf",
+  "d12": "/dice-models/PolyhedralDice/D12.gltf",
+  "d20": "/dice-models/PolyhedralDice/D20.gltf",
+  "d100": "/dice-models/PolyhedralDice/D10_Percentile.gltf"
+}

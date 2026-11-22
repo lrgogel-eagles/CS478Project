@@ -1,0 +1,12 @@
+{
+  "name": "campaign-keeper-unified",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "npm start --prefix server",
+    "dev": "npm run dev --prefix client",
+    "test:client": "npm test --prefix client",
+    "test:server": "npm test --prefix server"
+  }
+}

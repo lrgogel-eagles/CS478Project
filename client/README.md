@@ -1,26 +1,24 @@
-# Campaign Keeper client (Phase I)
+# Campaign Keeper Client
 
-React + TypeScript + Bootstrap + Fetch API, with Vitest page tests.
+React and TypeScript frontend for Campaign Keeper.
 
-## Start
+## Development
 
-```bash
+Start the backend separately, then run:
+
+```powershell
 cd client
 npm install
 npm run dev
 ```
 
-Open http://localhost:5173. Backend API is proxied to http://localhost:3000; change `vite.config.ts` if needed.
+Open http://localhost:5173. The development server proxies API requests to http://localhost:3000.
 
-## Test
+## Build and tests
 
-```bash
-npm test
+```powershell
 npm run build
+npm test
 ```
 
-## API
-
-`src/api/client.ts` calls the routes listed on the wiki's API Routes page. `LIMITS` in the same file holds the database's length limits, and the inputs use them.
-
-Pages are `/login`, `/campaigns` and `/campaigns/:id/dice`. If you aren't logged in you get sent to `/login`.
+The application includes account pages, campaign management, a campaign workspace, and a dice roller.

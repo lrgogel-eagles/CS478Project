@@ -1,0 +1,27 @@
+{
+  "format": "campaign-keeper-character",
+  "version": 1,
+  "character": {
+    "name": "Seraphina Vale",
+    "portrait": "🧝‍♀️",
+    "className": "Ranger",
+    "level": "5",
+    "ancestry": "Wood Elf",
+    "background": "Outlander",
+    "alignment": "Neutral Good",
+    "maxHp": "44",
+    "currentHp": "37",
+    "tempHp": "6",
+    "armorClass": "16",
+    "speed": "35",
+    "strength": "12",
+    "dexterity": "18",
+    "constitution": "14",
+    "intelligence": "11",
+    "wisdom": "16",
+    "charisma": "10",
+    "inventory": "Longbow +1, 40 arrows, twin daggers, leather armor, healing potion x2, explorer pack, silver compass, 85 gold",
+    "abilities": "Extra Attack; Hunter’s Mark; Cure Wounds; Pass Without Trace; Favored Enemy: Undead; Sharpshooter",
+    "description": "Once a scout of the Moonwood, Seraphina now tracks the stolen Ember Crown. Her compass points toward ancient ruins, and she suspects the royal advisor is working with a necromancer. She trusts the party but has not revealed that her brother is among the missing."
+  }
+}
