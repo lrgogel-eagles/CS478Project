@@ -1,0 +1,94 @@
+name: CI Demo Deploy
+
+on:
+  push:
+    branches: [ci-demo]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-demo
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - name: Install client dependencies
+        run: npm ci
+        working-directory: client
+      - name: Build client
+        run: npm run build -- --base=/CS478Project/
+        working-directory: client
+      - name: Add 404 page for client-side routes
+        run: cp dist/index.html dist/404.html
+        working-directory: client
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: client/dist
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: campaign_keeper_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/campaign_keeper_test
+      JWT_SECRET: ci-only-jwt-secret
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+      - name: Install client dependencies
+        run: npm ci
+        working-directory: client
+      - name: Run client tests
+        run: npm test
+        working-directory: client
+      - name: Install server dependencies
+        run: npm ci
+        working-directory: server
+      - name: Seed database
+        run: npm run db:seed
+        working-directory: server
+      - name: Run server tests
+        run: npm test
+        working-directory: server
+
+  deploy:
+    needs: [build, test]
+    if: github.ref == 'refs/heads/ci-demo'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
